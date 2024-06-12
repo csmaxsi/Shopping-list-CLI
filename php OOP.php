@@ -1,6 +1,4 @@
 <?php
-// Online PHP compiler to run PHP program online
-// Print "Try programiz.pro" message
 
 class ShoppingListItem {
     private int $itemID;
