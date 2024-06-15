@@ -51,12 +51,28 @@ class ShoppingList {
         $this->items[] = $item;
     }
     
-    public function removeItem(ShoppingListItem $item): void
+    public function removeItem(int $index): void
     {
-        $index = array_search($item, $this->items);
+        //$index = array_search($item, $this->items);
         //$this->unset(items[$item]);
         array_splice($this->items,$index,1);
     }
+    
+    public function getItemsAsString(): string
+    {       
+        $items=$this->getItems();
+        $stringArray=[];
+        $counter=1;
+        foreach($items as $index =>$item)
+        {
+            $stringArray[]= "$index. ".$item->getItemName();
+        }
+        
+        return implode("\n",$stringArray);
+        
+    }
+    
+    
 }
 
 class ShoppingListCommandPrompt
@@ -75,17 +91,13 @@ class ShoppingListCommandPrompt
         
         
         switch($answer)
-        {
+        {   
             case 1:
-                $items=$this->shoppingList->getItems();
-                $stringArray=[];
-                foreach($items as $item)
-                {
-                    $stringArray[]= $item->getItemName();
-                }
-                $string = implode("\n",$stringArray);
-                $this->showMessage($string);
+                $itemsList=$this->shoppingList->getItemsAsString();
+                $this->showMessage($itemsList);
+                echo "\n";
                 break;
+                
             case 2:
                 $itemName= $this->getAnswer("Enter item name: ");
                 $item=new ShoppingListItem(4,$itemName);
@@ -94,7 +106,15 @@ class ShoppingListCommandPrompt
                 break;
                 
             case 3:
-                
+                $itemsList=$this->shoppingList->getItemsAsString();
+                $this->showMessage($itemsList);
+                $stringItem= $this->getAnswer("\nEnter the index to delete: \n");
+                $itemIndex=(int)$stringItem;
+                $this->shoppingList->removeItem($itemIndex);
+                echo "Item Deleted successfully !\n";
+                break;
+            case 4:
+                break;
             default:
                 $this->showMessage("Unsupported input");
                 
@@ -102,6 +122,8 @@ class ShoppingListCommandPrompt
         
         $this->startFlow();
     }
+    
+    
     
     public function showMessage(string $message): void
     {
